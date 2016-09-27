@@ -2857,6 +2857,13 @@ CPTexturedBackgroundWindowMask
     if (_sheetContext["isClosing"])
         return;
 
+    if (_sheetContext["isOpening"])
+    {
+        // Allow sheet to be closed while opening, it will close when current animation is complete
+        _sheetContext["shouldClose"] = YES;
+        return;
+    }
+
     _sheetContext["isAttached"] = NO;
     _sheetContext["isClosing"] = YES;
     _sheetContext["opened"] = NO;
@@ -3034,9 +3041,14 @@ CPTexturedBackgroundWindowMask
 
         // we wanted to close the sheet while it animated in, do that now
         if (_sheetContext["shouldClose"] === YES)
+        {
+            _sheetContext["shouldClose"] = NO;
             [self _detachSheetWindow];
-        else
+        } 
+        else 
+        {
             [sheet makeKeyWindow];
+        }
     }
     else
     {
